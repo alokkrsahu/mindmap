@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* React Flow dark mode overrides */
+.react-flow__minimap {
+  border-radius: 8px;
+}
