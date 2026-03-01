@@ -37,10 +37,8 @@ export function ChatInput() {
         const edges = apiEdgesToFlowEdges(graph.edges);
 
         if (hasNodes) {
-          // Graph already exists — merge new nodes/edges into existing graph
           mergeGraph(nodes, edges);
         } else {
-          // First message — set the full graph
           setGraph(nodes, edges, graph.summary);
         }
 
@@ -67,7 +65,6 @@ export function ChatInput() {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-resize textarea height
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
@@ -85,24 +82,32 @@ export function ChatInput() {
     [handleSubmit],
   );
 
+  const hasInput = input.trim().length > 0;
+
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 items-end">
+    <form onSubmit={handleSubmit} className="relative">
       <textarea
         ref={textareaRef}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Enter a topic to explore..."
+        placeholder="Ask anything..."
         disabled={isLoading || !sessionId}
         rows={1}
-        className="flex-1 px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50 resize-none leading-snug"
+        className="w-full pl-4 pr-12 py-3 rounded-xl bg-slate-800/80 border border-slate-700/60 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/20 disabled:opacity-50 resize-none leading-snug transition-all"
       />
       <button
         type="submit"
-        disabled={isLoading || !input.trim() || !sessionId}
-        className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        disabled={isLoading || !hasInput || !sessionId}
+        className={`absolute right-2.5 bottom-2.5 w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+          hasInput && !isLoading
+            ? 'bg-blue-500 hover:bg-blue-400 text-white shadow-lg shadow-blue-500/20'
+            : 'bg-slate-700/50 text-slate-500 cursor-not-allowed'
+        }`}
       >
-        Go
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+        </svg>
       </button>
     </form>
   );
