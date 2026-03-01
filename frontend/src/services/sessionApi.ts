@@ -10,4 +10,7 @@ export const sessionApi = {
 
   getHistory: (sessionId: string) =>
     apiRequest<HistoryResponse>(`/session/${sessionId}/history`),
+
+  delete: (sessionId: string) =>
+    apiRequest<{ deleted: boolean }>(`/session/${sessionId}`, { method: 'DELETE' }),
 };

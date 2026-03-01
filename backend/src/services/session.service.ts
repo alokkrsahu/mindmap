@@ -21,8 +21,16 @@ export async function addFileIdToSession(sessionId: string, fileId: string) {
   });
 }
 
+export async function deleteSession(id: string) {
+  // Delete related records first (cascade)
+  await prisma.message.deleteMany({ where: { sessionId: id } });
+  await prisma.graph.deleteMany({ where: { sessionId: id } });
+  return prisma.session.delete({ where: { id } });
+}
+
 export async function listSessions() {
   const sessions = await prisma.session.findMany({
+    where: { messages: { some: {} } },
     orderBy: { createdAt: "desc" },
     include: {
       messages: { orderBy: { createdAt: "asc" } },

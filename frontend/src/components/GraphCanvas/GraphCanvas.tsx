@@ -1,7 +1,6 @@
 import {
   ReactFlow,
   Background,
-  Controls,
   MiniMap,
   ConnectionMode,
   ReactFlowProvider,
@@ -11,6 +10,7 @@ import '@xyflow/react/dist/style.css';
 import { useMindMapStore } from '../../store';
 import { MindMapNode } from './MindMapNode';
 import { MindMapEdge } from './MindMapEdge';
+import { CanvasToolbar } from './CanvasToolbar';
 import { useAutoLayout } from '../../hooks/useAutoLayout';
 import type { AppNode } from '../../types/graph';
 
@@ -39,12 +39,14 @@ function GraphCanvasInner() {
       connectionMode={ConnectionMode.Loose}
       fitView
       colorMode="dark"
+      proOptions={{ hideAttribution: true }}
     >
       <Background color="#334155" gap={20} />
-      <Controls />
+      <CanvasToolbar />
       <MiniMap
         nodeColor={(node: AppNode) => node.data?.color ?? '#64748b'}
         maskColor="rgba(0,0,0,0.7)"
+        style={{ width: 120, height: 80 }}
       />
     </ReactFlow>
   );

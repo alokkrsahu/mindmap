@@ -48,6 +48,16 @@ export function Dashboard() {
     navigate(`/session/${id}`);
   }, [navigate]);
 
+  const handleDeleteSession = useCallback(async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    try {
+      await sessionApi.delete(id);
+      setSessions((prev) => prev.filter((s) => s.id !== id));
+    } catch (err) {
+      console.error('Failed to delete session:', err);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <header className="border-b border-slate-800 px-8 py-6">
@@ -90,15 +100,24 @@ export function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {sessions.map((session, i) => (
-              <motion.button
+              <motion.div
                 key={session.id}
                 onClick={() => handleOpenSession(session.id)}
-                className="text-left p-5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-600 hover:bg-slate-800/60 transition-colors cursor-pointer"
+                className="relative text-left p-5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-600 hover:bg-slate-800/60 transition-colors cursor-pointer group"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
               >
-                <p className="font-medium text-sm text-slate-100 line-clamp-2 min-h-[2.5rem]">
+                {/* Delete button */}
+                <button
+                  onClick={(e) => handleDeleteSession(e, session.id)}
+                  className="absolute top-2 right-2 w-7 h-7 rounded-md flex items-center justify-center text-slate-500 hover:text-red-400 hover:bg-slate-700 opacity-0 group-hover:opacity-100 transition-all"
+                  title="Delete session"
+                >
+                  &times;
+                </button>
+
+                <p className="font-medium text-sm text-slate-100 line-clamp-2 min-h-[2.5rem] pr-6">
                   {session.firstMessage
                     ? truncate(session.firstMessage, 80)
                     : 'Empty session'}
@@ -113,7 +132,7 @@ export function Dashboard() {
                   <span>{session.messageCount} messages</span>
                   <span>{session.graphCount} graphs</span>
                 </div>
-              </motion.button>
+              </motion.div>
             ))}
           </div>
         )}

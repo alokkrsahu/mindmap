@@ -10,7 +10,7 @@ import { apiNodesToFlowNodes, apiEdgesToFlowEdges } from '../../utils/mergeGraph
 import { v4 as uuidv4 } from 'uuid';
 
 const nodeTypeStyles = {
-  root: 'min-w-[180px] text-base font-bold shadow-xl border-2',
+  root: 'min-w-[180px] text-base font-bold',
   branch: 'min-w-[140px] text-sm font-semibold shadow-md border',
   leaf: 'min-w-[120px] text-xs font-medium shadow-sm border',
 } as const;
@@ -51,16 +51,25 @@ function MindMapNodeComponent({ data, id }: NodeProps<AppNode>) {
     [sessionId, id, label, isExpanded, setLoading, mergeGraph, markNodeExpanded, addMessage],
   );
 
+  const isRoot = nodeType === 'root';
+
   return (
     <motion.div
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-      className={`rounded-xl px-4 py-3 flex items-center gap-2 cursor-pointer hover:brightness-110 transition-all ${nodeTypeStyles[nodeType]}`}
+      className={`rounded-xl px-4 py-3 flex items-center gap-2 cursor-pointer hover:brightness-110 transition-[filter] ${nodeTypeStyles[nodeType]}`}
       style={{
         backgroundColor: color,
         color: textColor,
-        borderColor: adjustBrightness(color, -30),
+        ...(isRoot
+          ? {
+              borderWidth: 2,
+              borderStyle: 'solid',
+              borderColor: 'rgba(255,255,255,0.6)',
+              boxShadow: '0 0 12px rgba(255,255,255,0.25), 0 0 24px rgba(168,85,247,0.2), 0 0 4px rgba(59,130,246,0.2)',
+            }
+          : { borderColor: adjustBrightness(color, -30) }),
       }}
       onClick={handleExpand}
     >

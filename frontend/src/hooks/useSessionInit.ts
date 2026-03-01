@@ -27,16 +27,26 @@ export function useSessionInit() {
 
     // Load session history
     sessionApi.getHistory(id).then((res) => {
-      // Restore chat messages
+      // Restore chat messages — skip raw tool-call JSON from assistant
       for (const msg of res.messages) {
-        if (msg.role === 'user' || msg.role === 'assistant') {
+        if (msg.role === 'user') {
           addMessage({
             id: msg.id,
-            role: msg.role as 'user' | 'assistant',
+            role: 'user',
             content: msg.content,
             timestamp: new Date(msg.createdAt).getTime(),
           });
         }
+      }
+
+      // Use graph summaries as assistant messages instead of raw tool JSON
+      for (const graph of res.graphs) {
+        addMessage({
+          id: graph.id,
+          role: 'assistant',
+          content: graph.summary,
+          timestamp: new Date(graph.createdAt).getTime(),
+        });
       }
 
       // Restore graph from the accumulated graphs

@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { createSession, getSession, listSessions } from "../services/session.service.js";
+import { createSession, getSession, listSessions, deleteSession } from "../services/session.service.js";
 import { generateMindMap, expandNode } from "../services/openai.service.js";
 import { uploadFile } from "../services/upload.service.js";
 import { ApiError } from "../utils/api-error.js";
@@ -18,6 +18,20 @@ export async function handleListSessions(
   try {
     const sessions = await listSessions();
     res.json({ sessions });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function handleDeleteSession(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const id = getParamId(req);
+    await deleteSession(id);
+    res.json({ deleted: true });
   } catch (err) {
     next(err);
   }
